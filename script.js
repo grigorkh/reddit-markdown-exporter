@@ -2,7 +2,7 @@ let output = '';
 let style = 0;
 let escapeNewLine = false;
 let spaceComment = false;
-let excludeDeleted = true;
+let excludeDeleted = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const urlField = document.getElementById('url-field');
