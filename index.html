@@ -55,12 +55,25 @@
 
       <div id="outputBlock" class="mt-4" hidden>
         <h3>Markdown Output</h3>
-        <pre id="outputDisplay" class="bg-light p-3 border rounded"></pre>
+        <div class="d-flex justify-content-between align-items-center">
+  <pre id="outputDisplay" class="bg-light p-3 border rounded flex-grow-1"></pre>
+  <button class="btn btn-outline-secondary ms-2" id="copyButton" title="Copy to clipboard">📋</button>
+</div>
       </div>
 
       <footer class="mt-5">
         <p class="text-muted">GitHub Repo: <a href="https://github.com/grigorkh/reddit-markdown-exporter">grigorkh/reddit-markdown-exporter</a></p>
       </footer>
     </div>
-  </body>
+  <script>
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const output = document.getElementById("outputDisplay").textContent;
+      navigator.clipboard.writeText(output).then(() => {
+        const btn = document.getElementById("copyButton");
+        btn.textContent = "✅";
+        setTimeout(() => (btn.textContent = "📋"), 1500);
+      });
+    });
+  </script>
+</body>
 </html>
