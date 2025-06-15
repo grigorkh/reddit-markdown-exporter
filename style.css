@@ -111,3 +111,76 @@ pre {
   color: #1a0dab;
   text-decoration: none;
 }
+
+.output-section {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.output-left {
+  flex: 2;
+}
+
+.output-right {
+  flex: 1;
+  background: #fff9e6;
+  border: 2px solid #111;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  box-shadow: 4px 4px 0 #00000030;
+}
+
+.summary-box p {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.output-left h2,
+.output-right h2 {
+  margin-top: 0;
+}
+
+/* Restrict pre block width and make it scroll instead of stretch */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+}
+
+/* Ensure consistent layout for initial view */
+main.card,
+.output-section {
+  width: 90%;
+  max-width: 1000px;
+  margin: 2rem auto;
+}
+
+.output-section {
+  flex-wrap: wrap;
+}
+
+.output-left, .output-right {
+  min-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .output-section {
+    flex-direction: column;
+  }
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.output-header h2 {
+  margin: 0;
+}

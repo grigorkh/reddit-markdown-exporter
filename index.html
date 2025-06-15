@@ -22,21 +22,34 @@
       <label><input type="radio" name="exportStyle" value="list" /> List</label>
       <label><input type="checkbox" id="escapeNewLine" /> Escape new lines</label>
       <label><input type="checkbox" id="spaceComment" /> Space top-level comments</label>
+      <label><input type="checkbox" id="excludeDeleted" checked /> Exclude deleted users</label>
     </div>
 
     <div class="buttons">
       <button id="exportBtn">Export</button>
       <a id="downloadLink" class="hidden" download>Download .md</a>
     </div>
+  </main>
 
-    <section id="outputBlock" class="hidden">
-      <h2>Markdown Output</h2>
+  <section id="outputContainer" class="output-section" style="display: none;">
+    <div class="output-left">
+      <div class="output-header"><h2>📄 Markdown Output</h2><button id="copyButton">📋</button></div>
       <div class="output-wrapper">
         <pre id="outputDisplay"></pre>
         <button id="copyButton">📋</button>
       </div>
-    </section>
-  </main>
+    </div>
+    <div class="output-right">
+      <h2>📝 Post Summary</h2>
+      <div id="summaryBox" class="summary-box">
+        <p><strong>Title:</strong> <span id="summaryTitle">-</span></p>
+        <p><strong>Author:</strong> <span id="summaryAuthor">-</span></p>
+        <p><strong>Upvotes:</strong> <span id="summaryUps">-</span></p>
+        <p><strong>Total Comments:</strong> <span id="summaryComments">-</span></p>
+        <p><strong>Permalink:</strong><br><a id="summaryPermalink" href="#" target="_blank">View on Reddit</a></p>
+      </div>
+    </div>
+  </section>
 
   <footer class="footer">
     <p>View on <a href="https://github.com/grigorkh/reddit-markdown-exporter">GitHub</a></p>

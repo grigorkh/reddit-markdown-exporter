@@ -1,6 +1,9 @@
+// Modernized Reddit Markdown Exporter Script with Error Handling
+
 let output = '';
 let style = 0;
 let escapeNewLine = false;
+let excludeDeleted = true;
 let spaceComment = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     style = document.querySelector('input[name="exportStyle"]:checked').value === 'tree' ? 0 : 1;
     escapeNewLine = document.getElementById('escapeNewLine').checked;
     spaceComment = document.getElementById('spaceComment').checked;
+    excludeDeleted = document.getElementById('excludeDeleted').checked;
   }
 
   function fetchRedditData(url) {
