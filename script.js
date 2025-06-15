@@ -1,23 +1,15 @@
-// Modernized Reddit Markdown Exporter Script with Error Handling
-
 let output = '';
 let style = 0;
 let escapeNewLine = false;
-let excludeDeleted = true;
 let spaceComment = false;
+let excludeDeleted = true;
 
 document.addEventListener('DOMContentLoaded', () => {
   const urlField = document.getElementById('url-field');
   const exportBtn = document.getElementById('exportBtn');
   const outputDisplay = document.getElementById('outputDisplay');
-  const outputBlock = document.getElementById('outputBlock');
+  const outputContainer = document.getElementById('outputContainer');
   const downloadLink = document.getElementById('downloadLink');
-
-  const queryUrl = new URLSearchParams(window.location.search).get('url');
-  if (queryUrl) {
-    urlField.value = queryUrl;
-    startExport();
-  }
 
   exportBtn.addEventListener('click', startExport);
 
@@ -41,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fetchRedditData(url) {
     output = '';
+    outputContainer.style.display = "none";
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `${url}.json`);
@@ -54,37 +47,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const data = xhr.response;
-        const post = data[0].data.children[0]?.data;
-        const comments = data[1].data.children;
+        const post = data[0]?.data?.children?.[0]?.data;
+        const comments = data[1]?.data?.children || [];
 
         if (!post) {
           alert('Could not find post data.');
-          console.error('Post structure:', data[0]);
           return;
         }
 
         displayPost(post);
         output += '\n\n## Comments\n\n';
 
+        let commentCount = 0;
         comments.forEach(comment => {
-          try {
-            displayComment(comment, comment.data?.depth || 0);
-          } catch (e) {
-            console.warn('Skipping invalid comment:', comment, e);
+          if (comment.kind === "t1") {
+            try {
+              displayComment(comment, comment.data?.depth || 0);
+              commentCount++;
+            } catch (e) {
+              console.warn('Skipping comment due to error:', comment, e);
+            }
           }
         });
 
         outputDisplay.textContent = output;
-        outputBlock.hidden = false;
+        outputContainer.style.display = "flex";
+
+        document.getElementById("summaryTitle").textContent = post.title;
+        document.getElementById("summaryAuthor").textContent = post.author;
+        document.getElementById("summaryUps").textContent = post.ups;
+        document.getElementById("summaryComments").textContent = commentCount;
+        document.getElementById("summaryPermalink").href = "https://reddit.com" + post.permalink;
 
         const blob = new Blob([output], { type: 'text/plain' });
+        const safeTitle = post.title.replace(/[^a-z0-9]/gi, '_').toLowerCase().slice(0, 50);
         downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = 'reddit-thread.md';
+        downloadLink.download = `${safeTitle || 'reddit_thread'}.md`;
         downloadLink.classList.remove('hidden');
         downloadLink.hidden = false;
       } catch (err) {
         alert('Something went wrong while processing the Reddit data.');
-        console.error('Error during export:', err);
+        console.error('Processing error:', err);
       }
     };
 
@@ -107,14 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function displayComment(comment, depth) {
     const { body, author, ups, downs, replies } = comment.data || {};
+    if (!body || (excludeDeleted && author === "[deleted]")) return;
+
     const indent = style === 0 ? '─'.repeat(depth) : '\t'.repeat(depth);
     const prefix = style === 0 ? (indent ? `├${indent} ` : '##### ') : (indent ? `${indent}- ` : '- ');
-
-    if (body) {
-      output += `${prefix}${formatComment(body)} ⏤ by *${author}* (↑ ${ups} / ↓ ${downs})\n`;
-    } else {
-      output += `${prefix}[deleted]\n`;
-    }
+    output += `${prefix}${formatComment(body)} ⏤ by *${author}* (↑ ${ups} / ↓ ${downs})\n`;
 
     if (replies?.data?.children?.length) {
       replies.data.children.forEach(reply => displayComment(reply, depth + 1));
