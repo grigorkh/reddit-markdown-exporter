@@ -1,5 +1,3 @@
-// Modernized XMLHttpRequest logic (CORS-friendly for Reddit API)
-
 let output = '';
 let style = 0;
 let escapeNewLine = false;
@@ -43,29 +41,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `${url}.json`);
     xhr.responseType = 'json';
+
     xhr.onload = () => {
-      if (xhr.status !== 200) {
-        alert('Failed to fetch Reddit post. Check the URL and try again.');
-        return;
+      try {
+        if (xhr.status !== 200) {
+          alert('Failed to fetch Reddit post. Check the URL and try again.');
+          return;
+        }
+
+        const data = xhr.response;
+        const post = data[0].data.children[0]?.data;
+        const comments = data[1].data.children;
+
+        if (!post) {
+          alert('Could not find post data.');
+          console.error('Post structure:', data[0]);
+          return;
+        }
+
+        displayPost(post);
+        output += '\n\n## Comments\n\n';
+
+        comments.forEach(comment => {
+          try {
+            displayComment(comment, comment.data?.depth || 0);
+          } catch (e) {
+            console.warn('Skipping invalid comment:', comment, e);
+          }
+        });
+
+        outputDisplay.textContent = output;
+        outputBlock.hidden = false;
+
+        const blob = new Blob([output], { type: 'text/plain' });
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'reddit-thread.md';
+        downloadLink.classList.remove('hidden');
+        downloadLink.hidden = false;
+      } catch (err) {
+        alert('Something went wrong while processing the Reddit data.');
+        console.error('Error during export:', err);
       }
-
-      const data = xhr.response;
-      const post = data[0].data.children[0].data;
-      const comments = data[1].data.children;
-
-      displayPost(post);
-      output += '\n\n## Comments\n\n';
-      comments.forEach(comment => displayComment(comment, comment.data.depth || 0));
-
-      outputDisplay.textContent = output;
-      outputBlock.hidden = false;
-
-      const blob = new Blob([output], { type: 'text/plain' });
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = 'reddit-thread.md';
-      downloadLink.classList.remove('disabled');
-      downloadLink.hidden = false;
     };
+
     xhr.onerror = () => alert('Network error occurred while fetching the Reddit post.');
     xhr.send();
   }
@@ -84,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function displayComment(comment, depth) {
-    const { body, author, ups, downs, replies } = comment.data;
+    const { body, author, ups, downs, replies } = comment.data || {};
     const indent = style === 0 ? '─'.repeat(depth) : '\t'.repeat(depth);
     const prefix = style === 0 ? (indent ? `├${indent} ` : '##### ') : (indent ? `${indent}- ` : '- ');
 
@@ -100,4 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (depth === 0 && spaceComment) output += '\n';
   }
+
+  document.getElementById("copyButton").addEventListener("click", () => {
+    const output = document.getElementById("outputDisplay").textContent;
+    navigator.clipboard.writeText(output).then(() => {
+      const btn = document.getElementById("copyButton");
+      btn.textContent = "✅";
+      setTimeout(() => (btn.textContent = "📋"), 1500);
+    });
+  });
 });
