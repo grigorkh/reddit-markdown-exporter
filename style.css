@@ -177,12 +177,14 @@ main.card,
 
 .output-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 0.5rem;
 }
+
 .output-header h2 {
   margin: 0;
+  font-size: 1.2rem;
 }
 
 .copy-top {
@@ -192,5 +194,4 @@ main.card,
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  margin-left: auto;
 }
