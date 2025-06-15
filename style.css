@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   background: #fef9f2;
   color: #1e1e1e;
 }
@@ -183,4 +183,14 @@ main.card,
 }
 .output-header h2 {
   margin: 0;
+}
+
+.copy-top {
+  background: #eee;
+  border: 1px solid #888;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: auto;
 }
