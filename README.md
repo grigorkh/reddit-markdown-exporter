@@ -2,7 +2,7 @@
 
 Export Reddit threads (posts + comments) into clean and readable **Markdown format**.
 
-![Preview]()
+![Preview](./preview.png)
 
 ## 🌐 Live Demo
 
